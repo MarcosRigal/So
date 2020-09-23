@@ -1,3 +1,4 @@
+![SOO.](https://www.friday-fun.com/wp-content/uploads/2018/10/os.jpeg)
 # Instructions:
 The practices are organized as follows:
   
