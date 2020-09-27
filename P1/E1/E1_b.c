@@ -8,7 +8,7 @@ int main()
   int n, child, status;
   printf("Introduzca el número de procesos hijo que desea generar: ");
   scanf("%d", &n);
-  printf("Soy %d el padre de todos\n", getpid());
+  printf("Soy %d el primero de esta dinastía de procesos\n", getpid());
   for (int i = 0; i < n; i++)
   {
     child = fork();

@@ -8,6 +8,7 @@ int main()
   int n,status;
   printf("Introduzca el número de procesos hijo que desea generar: ");
   scanf("%d", &n);
+  getchar();
   printf("Soy %d el padre de todos\n", getpid());
   for (int i = 0; i < n; i++)
   {
