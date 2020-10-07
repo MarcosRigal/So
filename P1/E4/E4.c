@@ -3,7 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-//Da un warning al compilar que no se como quitar pero funciona :)
+//Para testear si un exec funciona ponemos una linea despues del exec si se ejecuta es que el exec ha fallado
+//Añadir al factorial una impresion parcial del factorial
 
 int main(int argc, char const *argv[])
 {

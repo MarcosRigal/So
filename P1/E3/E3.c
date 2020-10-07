@@ -3,9 +3,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
-//Da un warning al compilar que no se como quitar pero funciona :)
+//Da un warning al compilar que no se como quitar pero funciona :) era por la definición del main por defecto se arregla cambiando el orden de char const * argv a char * const argv[]
+//Añadir control de errores
 
-int main(int argc, char const *argv[])
+int main(int argc, char * const argv[])//al final del argv hay un puntero a null
 {
   int status;
   int pid[2];
@@ -18,8 +19,8 @@ int main(int argc, char const *argv[])
         printf("Soy %d el hijo nº %d del proceso: %d\n", getpid(), (i+1), getppid());
         if (i==0)
         {
-            execl("/usr/bin/gnome-calculator", "gnome-calculator", NULL);
-        }
+            execlp(argv[1], argv[1], NULL);//la p permite buscar la ruta asi que habria que usar los exec con p de path
+        }//repetimos el argv ya que uno es la ruta y el otro el ejecutable
         else
         {
             execvp(argv[2], argv+2);

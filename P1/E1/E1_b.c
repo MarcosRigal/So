@@ -16,7 +16,7 @@ int main()
     {
       case 0:
         printf("Soy %d el hijo del proceso: %d\n", getpid(), getppid());
-        break;
+        break;//usar macros de exit
 
       case -1:
         printf("Error al crear el proceso hijo\n");
@@ -25,7 +25,7 @@ int main()
       default:
         printf("Esperando a que acabe mi hijo %d\n", child);
         wait(&status);
-        printf("Ya ha acabado mi hijo %d con el codigo de salida: %d\n", child, WEXITSTATUS(status));
+        printf("Ya ha acabado mi hijo %d con el codigo de salida: %d\n", child, WEXITSTATUS(status));//tienes que comprobar que acabe bien
         return 0;
     }
   }

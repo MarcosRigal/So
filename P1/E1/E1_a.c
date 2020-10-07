@@ -10,8 +10,8 @@ int main()
   scanf("%d", &n);
   getchar();
   printf("Soy %d el padre de todos\n", getpid());
-  for (int i = 0; i < n; i++)
-  {
+  for (int i = 0; i < n; i++) //cuando hacemos el fork la variable i es distinta en cada caso 
+  {//se crean bucleas diferentes e independientes
     switch(fork())
     {
       case 0:

@@ -16,10 +16,10 @@ int main()
   switch(id)
   {
     case 0:
-      signal(SIGUSR1, tratarSennal); //¿Con ponerlo una vez ya vale para todo el programa?
+      signal(SIGUSR1, tratarSennal); //¿Con ponerlo una vez ya vale para todo el programa? Si es como un define en el que le dices como reaccionar a una señal en concreto
       printf("Soy %d el hijo del proceso: %d\n", getpid(), getppid());
       for (int i = 0; i < 5; i++)
-      {
+      {//Si pones signal antes del fork los dos reacionan igual y si quieres restaurar el comportamiento del padre en su parte del switch le ponemos un signal(getpid(), sigdefault)
         pause();
       }
       return 0;

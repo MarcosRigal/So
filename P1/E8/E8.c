@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
     return -1;
   }
   printf("PID: %d\n", atoi(argv[1]));
-  status = kill(SIGUSR1, atoi(argv[1]));
+  status = kill(atoi(argv[1]), SIGUSR1);
   printf("Kill return: %d\n", status);
   return 0;
 }

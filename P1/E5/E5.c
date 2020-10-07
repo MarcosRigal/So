@@ -3,9 +3,11 @@
 #include <unistd.h>
 #include <stdio.h>
 
+int a=0;
+
 int main()
 {
-  int n,status, a=0;
+  int n,status;
   printf("Introduzca el número de procesos hijo que desea generar: ");
   scanf("%d", &n);
   getchar();
