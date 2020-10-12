@@ -3,18 +3,36 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
-  int status;
-  if (argc < 2)
+  int status; //Variable que almacenará el retorno de kill
+  if (argc < 2)//Comprobamos que se haya llamado al programa de forma adecuada
   {
     printf("Error falta el id del programa al que se le va a enviar la señal.");
-    return -1;
+    exit(EXIT_FAILURE);
   }
-  printf("PID: %d\n", atoi(argv[1]));
-  status = kill(atoi(argv[1]), SIGUSR1);
-  printf("Kill return: %d\n", status);
-  return 0;
+  printf("PID del proceso al que le enviaremos la señal: %d\n", atoi(argv[1])); //Imprimimos el id del proceso al que le enviamos la señal
+  status = kill(atoi(argv[1]), SIGUSR1);//Le enviamos la señal y almacenamos lo que nos devuelve kill
+  if (!status)//Comprobamos que la señal se haya enviado correctamente
+  {
+   printf("La señal se envió satisfactoriamente.\n");  
+  }
+  else
+  {
+    printf("Error al enviar la señal. Valor de erno: %d, definido como: %s\n", errno, strerror(errno));
+  }
+  sleep(1);
+  status = kill(atoi(argv[1]), SIGKILL);//Le enviamos la señal y almacenamos lo que nos devuelve kill
+  if (!status)//Comprobamos que la señal se haya enviado correctamente
+  {
+   printf("La señal se envió satisfactoriamente.\n");  
+  }
+  else
+  {
+    printf("Error al enviar la señal. Valor de erno: %d, definido como: %s\n", errno, strerror(errno));
+  }
+  exit(EXIT_SUCCESS);//Como todo ha ido bien el proceso padre acaba exitosamente
 }
-//no se porque no lo borra
