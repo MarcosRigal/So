@@ -41,7 +41,7 @@ int main()
       sleep(3);
       kill(pid, SIGKILL);//El padre le dice al hijo que acabe
   }
-  while ( (childpid=wait(&status)) > 0 ) 
+  while ( (childpid=waitpid(-1, &status, WUNTRACED | WCONTINUED)) > 0 )//Si lo hacemos así en vez de con wait podemos saber si el proceso ha sido pausado y poniendo -1 en el primer parametro de waitpid esperamos a cualquier hijo
 	{//Este bucle se repetirá mientas haya hijos que esperar cuando no haya mas wait devolverá -1
 		if (WIFEXITED(status)) 
 		{//Entrará en el caso de que el hijo haya finaizado correctamente ya que WIFEXITED(status) devolverá true

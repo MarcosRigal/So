@@ -29,7 +29,7 @@ int main()
         exit(EXIT_FAILURE); //Indica que ha ocurrido un fallo en la ejecución
 
       default: //Aquí entra el padre y se queda esperando en el bucle a que su hijo termine
-      while ( (childpid=wait(&status)) > 0 ) 
+      while ( (childpid=waitpid(-1, &status, WUNTRACED | WCONTINUED)) > 0 )//Si lo hacemos así en vez de con wait podemos saber si el proceso ha sido pausado y poniendo -1 en el primer parametro de waitpid esperamos a cualquier hijo
 	    {//Este bucle se repetirá mientas haya hijos que esperar cuando no haya mas wait devolverá -1
 	    	if (WIFEXITED(status)) 
 	    	{//Entrará en el caso de que el hijo haya finaizado correctamente ya que WIFEXITED(status) devolverá true
