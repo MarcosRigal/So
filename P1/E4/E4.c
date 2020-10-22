@@ -25,8 +25,8 @@ int main(int argc, char const *argv[])
         printf("Soy %d el hijo nº %d del proceso: %d\n", getpid(), (i+1), getppid()); //El hijo se identifica
         if (i==0)//Como el programa pide que se ejecuten dos aplicaicones diferentes usaremos el valor de i para ejecutar una u otra
         {//Calculamos el factorial del primer argumento
-            execlp("./Factorial", "./Factorial", argv[1], NULL);
-        }
+            execlp("./Factorial", "./Factorial", argv[1], NULL);//La p permite buscar el ejecutable en el path y en el directorio de trabajo
+        } 
         else
         {//Calculamos el factorial del segundo argumento
             execlp("./Factorial", "./Factorial", argv[2], NULL);
