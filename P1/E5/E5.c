@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <string.h>
 
-int a = 0;
+int a = 0; //Inicializamos a 0 la variable global
 
 int main()
 {
