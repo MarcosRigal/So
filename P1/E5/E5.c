@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
   if (argc < 2)//Comprobamos que se haya llamado al programa de forma adecuada
   {
     printf("Error falta el numero de hijos que se desea crear.\n");
-        printf("Llame al programa de la siguiente forma: (./E5 n) donde n es el numero de hijos que desea crear \n");
+    printf("Llame al programa de la siguiente forma: (./E5 n) donde n es el numero de hijos que desea crear \n");
     exit(EXIT_FAILURE);
   }
   int status; //Creamos la variable que almacena el número de hijos y la que almacena el estado de salida del hijo
