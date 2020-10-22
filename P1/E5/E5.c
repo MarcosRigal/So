@@ -7,17 +7,19 @@
 #include <string.h>
 
 int a = 0; //Inicializamos a 0 la variable global
-
-int main()
+int main(int argc, char const *argv[])
 {
-  int n,status; //Creamos la variable que almacena el número de hijos y la que almacena el estado de salida del hijo
+  if (argc < 2)//Comprobamos que se haya llamado al programa de forma adecuada
+  {
+    printf("Error falta el numero de hijos que se desea crear.\n");
+        printf("Llame al programa de la siguiente forma: (./E5 n) donde n es el numero de hijos que desea crear \n");
+    exit(EXIT_FAILURE);
+  }
+  int status; //Creamos la variable que almacena el número de hijos y la que almacena el estado de salida del hijo
   pid_t pid, childpid; //Estas variables almacenan el id de los procesos hijos. 
   //Pid almacena el valor devuelto al padre tras el fork y chilpid el valor devuelto al padre por la función wait cuando termina de esperar al hijo 
-  printf("Introduzca el número de procesos hijo que desea generar: ");
-  scanf("%d", &n); //Recogemos la entrada
-  getchar(); //Para vaciar el buffer
   printf("Soy %d el padre de todos\n", getpid()); //El proceso padre imprime su id
-  for (int i = 0; i < n; i++) //Cuando hacemos el fork la variable i es distinta en cada caso 
+  for (int i = 0; i < atoi(argv[1]); i++) //Cuando hacemos el fork la variable i es distinta en cada caso 
   {//Se crean bucles diferentes e independientes
     pid = fork(); // Aqúi el proceso tiene su hijo. En el padre pid valdrá el id del hijo y en el hijo pid valdrá 0
     switch(pid) //En base al valor de pid cada proceso ejecutará una función
