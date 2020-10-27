@@ -26,8 +26,8 @@ int main()
       for (int i = 0; i < 5; i++)
       {//Si pones signal antes del fork los dos reacionan igual y si quieres restaurar el comportamiento del padre en su parte del switch le ponemos un signal(getpid(), sigdefault)
         pause();
-      }      
-      exit(EXIT_SUCCESS); //El hijo muere
+      }
+      sleep(10);//Para que el padre pueda mandarle el sigkill
     case -1: //Ha ocurrido un error al realizar el fork
       printf("Error al crear el proceso hijo\n"); //Se informa al usuario
       exit(EXIT_FAILURE); //Indica que ha ocurrido un fallo en la ejecución
