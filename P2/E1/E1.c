@@ -64,25 +64,3 @@ int main(int argc, char const *argv[])
   printf("La suma de todos es: %f\n", suma);//Imprimimos la suma
   exit(EXIT_SUCCESS);//Salimos indicando que todo ha ido bien
 }
-
-
-
-
-
-//int main(int argn, char ** argp)
-//{
-//  int join_value;
-//	long rvalue;
-//
-//	pthread_create(&thread, NULL, th_function, NULL);
-//
-//	join_value = pthread_join(thread,(void**) &ret);
-//
-//	if(join_value!=0)
-//	{
-//	  perror("Fallo en pthread_join()...\n");		
-//	  exit(EXIT_FAILURE);
-//	}
-//	  
-//	rvalue = *ret; 
-//	printf("Proceso o hilo principal, el valor devuelto por la hebra es: %ld\n", rvalue);
