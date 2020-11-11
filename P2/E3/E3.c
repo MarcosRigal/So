@@ -7,7 +7,7 @@ typedef struct //Definimos la estructura vector info para pasarsela a los hilos 
 {
   int *vector;//vector
   int nEle;//Numero de elementos del vector
-} vinfo;
+} vInfo;
 
 int num_Ok(int nVec)//Comprobamos que el numero introducido por el usuario al llamar el programa sea 2 o 5
 {
@@ -50,13 +50,13 @@ void imprimeVector (int *vector, int nEle)
   printf("\n");
 }
 
-vinfo * creaHijos(int* vParent, int nThreads)
+vInfo * creaHijos(int* vParent, int nThreads)
 {
   int nEle = 10 / nThreads;//Calculamos el numero de elementos del vector hijo
-	vinfo * vChilds = (vinfo *)malloc (nThreads*sizeof(vinfo));//Reservamos memoria para el vector de estructuras vinfo
+	vInfo * vChilds = (vInfo *)malloc (nThreads*sizeof(vInfo));//Reservamos memoria para el vector de estructuras vInfo
 	for (int i=0;i<nThreads;i++)
 	{
-		vChilds[i].vector = reservarMemoria((nEle));//Reservamos memoria para los vectores que hay dentro de las estructuras vinfo
+		vChilds[i].vector = reservarMemoria((nEle));//Reservamos memoria para los vectores que hay dentro de las estructuras vInfo
     vChilds[i].nEle = nEle;//Guardamos en las estructuras el numero de elementos que tiene su vector
     int k = 0;//Definimos un iterador para el bucle que se pone a 0 siempre que pasa por ahí ya que los vectores de dentro de la estructura van siempre de 0 a 1 o de 0 a 4 no como la j que puede ir de 0 a 1, 0 a 4 , 5 a 9, 2 a 3 ...
     for (int j = (i*nEle); j < ((i*nEle)+nEle); j++)
@@ -74,8 +74,8 @@ void * th_sum (void* d)//Esta será la función que ejecuten las hebras.
 {
   int *suma = malloc(sizeof(int));//Reservamos memoria para un puntero de tipo int
   *suma = 0;//Como lo vamos a usar de contador lo ponemos a 0
-  vinfo *v;//Creamos un puntero para deshacer el casting a void de d ya que apunta a un vector de estructuras de tipo vinfo
-  v = (vinfo*) d;
+  vInfo *v;//Creamos un puntero para deshacer el casting a void de d ya que apunta a un vector de estructuras de tipo vInfo
+  v = (vInfo*) d;
   for (int i = 0; i < v->nEle; i++)
   {
     *suma += v->vector[i];// Sumamos los elementos del vector
@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
   }
   int nThreads = atoi(argv[1]);//Guardamos el numero de hilos que quiere crear el usuario
 
-  vinfo *vParent = malloc(sizeof(vinfo)); //Reservamos memoria para el vector
+  vInfo *vParent = malloc(sizeof(vInfo)); //Reservamos memoria para el vector
   vParent->nEle = 10;//Este es el "vector padre" que siempre va a tener 10 elementos
   
   vParent->vector = reservarMemoria (vParent->nEle);//Reservamos memoria para el vector
@@ -107,19 +107,19 @@ int main(int argc, char const *argv[])
   printf("El vector padre es: \n");
   imprimeVector(vParent->vector, vParent->nEle);//Imprimimos el vector para comprobar luego el resultado
 
-  vinfo *vChilds = creaHijos(vParent->vector ,nThreads); //Creamos un vector de estructuras vinfo que contendrá los vectores "hijos"
+  vInfo *vChilds = creaHijos(vParent->vector ,nThreads); //Creamos un vector de estructuras vInfo que contendrá los vectores "hijos"
 
   pthread_t thread[nThreads];//Creamos un vector para almacenar los identificadores de los hilos
   int *ret, suma = 0;//ret es el puntero que recibirá los valores devueltos por los hilos, suma almacenará la suma de los valores devueltos por los hilos
   for (int i = 0; i < nThreads; i++)//Crearemos tantos hilos como haya indicado el usuario
   {
     //En este bucle es donde creamos los nThreads hilos que ejecutarán la función th_rand
-  	if(pthread_create(&(thread[i]), NULL, (void*) th_sum, (void*) vChilds+(sizeof(vinfo)*i)))
+  	if(pthread_create(&(thread[i]), NULL, (void*) th_sum, (void*) vChilds+(sizeof(vInfo)*i)))
     /*
     El primer NULL es para definir si la hebra se incia en modo nucleo o en modo usuario al poner null es modo nucleo. 
-    Le pasamos como parámetro un puntero a una de las estructuras del vector de estructuras vinfo
+    Le pasamos como parámetro un puntero a una de las estructuras del vector de estructuras vInfo
     Como los vectores se almacenan seguidos en memoria en cada iteración hacemos que avance el puntero multiplicando el iterador por
-    el tamaño de un elemento de la estructura vinfo y sumando dicho valor al puntero vChilds que apunta al primer elemento del vector
+    el tamaño de un elemento de la estructura vInfo y sumando dicho valor al puntero vChilds que apunta al primer elemento del vector
     de esta forma en la primera iteración vChilds apuntará al elemento [0] del vector en la segunda al elemento [1] y así sucesivamente
     Funciona de forma similar a como lo haciamos con fichero binarios en los que guardabamos una estructura y teniamos que indicarle al
     puntero el tamaño de las estructuras almacenadas para que en cada iteración saltase uno.
