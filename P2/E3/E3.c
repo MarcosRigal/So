@@ -72,7 +72,7 @@ vInfo * creaHijos(int* vParent, int nThreads)
 
 void * th_sum (void* d)//Esta será la función que ejecuten las hebras.
 {
-  int *suma = malloc(sizeof(int));//Reservamos memoria para un puntero de tipo int
+  int *suma = malloc(sizeof(int));//Reservamos memoria para un puntero de tipo int en el monticulo ya que si no desaparece
   *suma = 0;//Como lo vamos a usar de contador lo ponemos a 0
   vInfo *v;//Creamos un puntero para deshacer el casting a void de d ya que apunta a un vector de estructuras de tipo vInfo
   v = (vInfo*) d;
