@@ -9,9 +9,9 @@ typedef struct //Definimos la estructura vector info para pasarsela a los hilos 
   int nEle;//Numero de elementos del vector
 } vInfo;
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;//Lo utilizo para bloquear el acceso al vector
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;//Semaforo para bloquear el acceso al vector
 
-int num_Ok(int num)//Comprobamos que el numero introducido por el usuario al llamar el programa sea 2 o 5
+int num_Ok(int num)//Comprobamos que el numero introducido por el usuario sea mallor que 1
 {
   if (num>0)
   {
@@ -28,15 +28,15 @@ int * reservarMemoria(int nEle)//Reservamos memoria para el vector
 	return vector;//Devolvemos el vector
 }
 
-int num_Rand_Camisetas(int nProveedores){return ((rand()%(nProveedores)));}
+int num_Rand_Camisetas(int nProveedores){return ((rand()%(nProveedores)));}//Numero de camiseta con el que se va a interactuar hacemos el modulo con el numero de proveedores puesto que si hay n proveedores hay n modelos de camisetas
 
-int num_Rand_Cantidad(){return ((rand()%100)+1);}
+int num_Rand_Cantidad(){return ((rand()%100)+1);}//Numero de camisetas que vamos a comprar
 
 void rellenaCamisetas(int *vector, int nEle)
 {
 	for (int i = 0; i < nEle; ++i)
 	{
-		vector[i] = num_Rand_Cantidad();//Rellenamos la matriz con numeros aleatorios
+		vector[i] = num_Rand_Cantidad();//Rellenamos el vector de camisetas con numeros aleatorios
 	}
 }
 
@@ -56,19 +56,19 @@ void imprimeCamisetas(int *vector, int nEle)
 void * th_compra (void* d)//Esta será la función que ejecuten las hebras.
 {
   vInfo *stock;
-  stock = (vInfo*) d;
-  int camiseta = num_Rand_Camisetas(stock->nEle);
-  int cantidad = num_Rand_Cantidad();
-  pthread_mutex_lock(&lock);//Semaforo para que las hebras no se pisen y modifiquen el valor de i
-  int diferencia = stock->vector[camiseta]-cantidad;
-  if (diferencia < 0)
-  {
+  stock = (vInfo*) d;//Deshacemos el casting a void
+  int camiseta = num_Rand_Camisetas(stock->nEle);//Numero de camiseta con la que va a interactuar
+  int cantidad = num_Rand_Cantidad();//Cantidad de camisetas que va a comprar
+  pthread_mutex_lock(&lock);//Semaforo para bloquear el acceso a la sección crítica
+  int diferencia = stock->vector[camiseta]-cantidad;//Calculo el stock tras la compra
+  if (diferencia < 0)//Si el stock se queda negativo como el minimo es 0 lo ponemos a 0 y salimos
+  {//Imprimo antes de actualizar el valor ya que el cliente compra todo el stock disponible
     printf("(-) El cliente %ld ha comprado %d unidades de la camiseta %d.\n", pthread_self(), stock->vector[camiseta], camiseta+1);
     stock->vector[camiseta] = 0;
     pthread_mutex_unlock(&lock);//Como ya hemos acabado con i la desbloqueamos y dejamos que otra hebra la utilice
     pthread_exit(NULL);
   }
-  stock->vector[camiseta] = diferencia;
+  stock->vector[camiseta] = diferencia;//Como el stock se quedaría positivo o = a 0 lo asignamos y salimos
   pthread_mutex_unlock(&lock);//Como ya hemos acabado con i la desbloqueamos y dejamos que otra hebra la utilice
   printf("(-) El cliente %ld ha comprado %d unidades de la camiseta %d.\n", pthread_self(), cantidad, camiseta+1);
   pthread_exit(NULL); 
@@ -77,12 +77,12 @@ void * th_compra (void* d)//Esta será la función que ejecuten las hebras.
 void * th_add (void* d)//Esta será la función que ejecuten las hebras.
 {
   vInfo *stock;
-  stock = (vInfo*) d;
-  int camiseta = num_Rand_Camisetas(stock->nEle);
-  int cantidad = num_Rand_Cantidad();
+  stock = (vInfo*) d;//Deshacemos el casting
+  int camiseta = num_Rand_Camisetas(stock->nEle);//Numero de la camiseta con la que vamos a interactuar
+  int cantidad = num_Rand_Cantidad();//Numero de unidades de la camiseta que vamos a añadit
   pthread_mutex_lock(&lock);//Semaforo para que las hebras no se pisen y modifiquen el valor de i
-  stock->vector[camiseta] += cantidad;
-  pthread_mutex_unlock(&lock);//Como ya hemos acabado con i la desbloqueamos y dejamos que otra hebra la utilice
+  stock->vector[camiseta] += cantidad;//Actualizamos el valor del vector
+  pthread_mutex_unlock(&lock);//Como ya hemos acabado con la sección crítica la desbloqueamos y dejamos que otra hebra la utilice
   printf("(+) El proveedor %ld ha añadido %d unidades de la camiseta %d.\n", pthread_self(), cantidad, camiseta+1);
   pthread_exit(NULL); 
 }
@@ -99,60 +99,37 @@ int main(int argc, char const *argv[])
     int nProveedores = atoi(argv[2]);//Guardamos el numero de proveedores
     pthread_t threadClientes[nClientes];//Creamos un vector para almacenar los identificadores de los hilos de los clientes
     pthread_t threadProveedores[nProveedores];//Creamos un vector para almacenar los identificadores de los hilos de los proveedores
-    vInfo stock;//Creamos un vector que almacenará el stock de camisetas
-    stock.nEle = nProveedores;
-    stock.vector = reservarMemoria(stock.nEle);
+    vInfo stock;//Creamos una estructura que almacenará el stock de camisetas
+    stock.nEle = nProveedores;//Almacenamos el numero de proveedores ya que es el mismo que el numero de camisetas
+    stock.vector = reservarMemoria(stock.nEle);//Reservamos memoria para el vector de camisetas
 
     srand(time(NULL));//Generamos la semilla para los números aleatorios
 
-    rellenaCamisetas(stock.vector, stock.nEle);
-    imprimeCamisetas(stock.vector, stock.nEle);
+    rellenaCamisetas(stock.vector, stock.nEle);//Rellenamos el vector de camisetas
+    imprimeCamisetas(stock.vector, stock.nEle);//Imprimimos el vector de camisetas
 
-    for (int i = 0; i < nClientes; i++)//Crearemos tantos hilos como haya indicado el usuario
+    for (int i = 0; i < nClientes; i++)//Crearemos tantos hilos como clientes haya
     {
-      //En este bucle es donde creamos los nThreads hilos que ejecutarán la función th_rand
+      //En este bucle es donde creamos los hilos clientes que ejecutarán la función th_compra
     	if(pthread_create(&(threadClientes[i]), NULL, (void*) th_compra, (void*) &stock))
-      /*
-      El primer NULL es para definir si la hebra se incia en modo nucleo o en modo usuario al poner null es modo nucleo. 
-      Le pasamos como parámetro un puntero a una de las estructuras del vector de estructuras vInfo
-      Como los vectores se almacenan seguidos en memoria en cada iteración hacemos que avance el puntero multiplicando el iterador por
-      el tamaño de un elemento de la estructura vInfo y sumando dicho valor al puntero vChilds que apunta al primer elemento del vector
-      de esta forma en la primera iteración vChilds apuntará al elemento [0] del vector en la segunda al elemento [1] y así sucesivamente
-      Funciona de forma similar a como lo haciamos con fichero binarios en los que guardabamos una estructura y teniamos que indicarle al
-      puntero el tamaño de las estructuras almacenadas para que en cada iteración saltase uno.
-      */
 	    {
 	      fprintf(stderr, "Error creating thread\n");//Ha ocurrido un error al crear la hebra
 	      exit(EXIT_FAILURE); //Finalizamos la ejecución
 	    }
     }
     
-    for (int i = 0; i < nProveedores; i++)//Crearemos tantos hilos como haya indicado el usuario
+    for (int i = 0; i < nProveedores; i++)//Crearemos tantos hilos como proveedores haya
     {
-      //En este bucle es donde creamos los nThreads hilos que ejecutarán la función th_rand
+      //En este bucle es donde creamos los hilos que ejecutarán la función th_add
     	if(pthread_create(&(threadProveedores[i]), NULL, (void*) th_add, (void*) &stock))
-      /*
-      El primer NULL es para definir si la hebra se incia en modo nucleo o en modo usuario al poner null es modo nucleo. 
-      Le pasamos como parámetro un puntero a una de las estructuras del vector de estructuras vInfo
-      Como los vectores se almacenan seguidos en memoria en cada iteración hacemos que avance el puntero multiplicando el iterador por
-      el tamaño de un elemento de la estructura vInfo y sumando dicho valor al puntero vChilds que apunta al primer elemento del vector
-      de esta forma en la primera iteración vChilds apuntará al elemento [0] del vector en la segunda al elemento [1] y así sucesivamente
-      Funciona de forma similar a como lo haciamos con fichero binarios en los que guardabamos una estructura y teniamos que indicarle al
-      puntero el tamaño de las estructuras almacenadas para que en cada iteración saltase uno.
-      */
 	    {
 	      fprintf(stderr, "Error creating thread\n");//Ha ocurrido un error al crear la hebra
 	      exit(EXIT_FAILURE); //Finalizamos la ejecución
 	    }
     }
     
-    for (int i = 0; i < nClientes; i++)//Con este bucle recogemos a todas las hebras
+    for (int i = 0; i < nClientes; i++)//Con este bucle recogemos a todas las hebras de clientes
     {
-    	/* A pthread_join() le estamos pasando por referencia como segundo parámetro la dirección
-    	de un puntero a int. Al pasar la dirección de memoria de un puntero por referencia, el contenido
-    	de ese puntero (a donde apunta) puede ser modificado. Con la dirección de
-    	memoria de un entero que se devuelve en "pthread_exit((void **)suma)". Por tanto, "int * ret" ahora
-    	apunta a donde apuntaba "int * suma", solo que está casteado a void.*/
       if(pthread_join(threadClientes[i], NULL)) 
 	    {//Entramos si falla el join
 	      fprintf(stderr, "Error joining thread\n");//Informamos al usuario
@@ -160,13 +137,8 @@ int main(int argc, char const *argv[])
 	    } 
     }
 
-    for (int i = 0; i < nProveedores; i++)//Con este bucle recogemos a todas las hebras
+    for (int i = 0; i < nProveedores; i++)//Con este bucle recogemos a todas las hebras de proveedores
     {
-    	/* A pthread_join() le estamos pasando por referencia como segundo parámetro la dirección
-    	de un puntero a int. Al pasar la dirección de memoria de un puntero por referencia, el contenido
-    	de ese puntero (a donde apunta) puede ser modificado. Con la dirección de
-    	memoria de un entero que se devuelve en "pthread_exit((void **)suma)". Por tanto, "int * ret" ahora
-    	apunta a donde apuntaba "int * suma", solo que está casteado a void.*/
       if(pthread_join(threadProveedores[i], NULL)) 
 	    {//Entramos si falla el join
 	      fprintf(stderr, "Error joining thread\n");//Informamos al usuario
@@ -174,7 +146,7 @@ int main(int argc, char const *argv[])
 	    } 
     }
     
-    imprimeCamisetas(stock.vector, stock.nEle);
+    imprimeCamisetas(stock.vector, stock.nEle);//Imprimimos el estado final del vector de camisetas
 
     exit(EXIT_SUCCESS);
 }
