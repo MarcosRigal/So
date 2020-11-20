@@ -15,7 +15,7 @@ pthread_mutex_lock(&lock) recibe una SIGKILL sin haber ejecutado pthread_mutex_u
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;//Lo utilizo para bloquear el acceso a la sección critica
 
 
-int global=0;//Declaramos una variable global
+int global=0;//Declaramos una variable globala
 
 void * h1()//Esta será la función que ejecuten las hebra 1
 {
