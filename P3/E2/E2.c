@@ -64,10 +64,16 @@ int main(int argc, char const *argv[])
 
   for (int i = 0; i < nThreads; i++)//Crearemos tantos hilos como haya indicado el usuario
   {
-    contador[i]=i+1;//Soy el Marcos del futuro que está comentando esto a las 1 am no se porque hice un vector si con pasar i+1 bastaba
-    //Pero no voy a cambiarlo porque es bastante probable que me lo cargue y tengo sueño
-    //En este bucle es donde creamos los nThreads hilos que ejecutarán la función th_rand
-  	if(pthread_create(&(threads[i]), NULL, (void*) th_sum, (void*) contador+(sizeof(int)*i)))
+    contador[i]=i+1;
+    /*Soy el Marcos del futuro que está comentando esto a las 1 am no se porque hice un vector si con pasar i+1 bastaba
+    Pero no voy a cambiarlo porque es bastante probable que me lo cargue y tengo sueño
+    Soy el Marcos del futuro + 10 minutos al final he probado a cambiarlo spoiler no funciona
+    La gracia de utilizar el vector era pasarle valores constantes a la hebra que no se modifiquen 
+    cuando se modifique i haciendo que sea independiente el orden de ejecución de cada hebra ya que 
+    reciben un puntero a un valor estatico
+    En este bucle es donde creamos los nThreads hilos que ejecutarán la función th_rand
+  	*/
+    if(pthread_create(&(threads[i]), NULL, (void*) th_sum, (void*) contador+(sizeof(int)*i)))
 	  {
 	    fprintf(stderr, "Error creating thread\n");//Ha ocurrido un error al crear la hebra
 	    exit(EXIT_FAILURE); //Finalizamos la ejecución

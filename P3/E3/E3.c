@@ -4,12 +4,13 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-int *gBuffer;
-int nEle = 0;
-int pointer = 0;
-sem_t fillCount;
-sem_t mutex;
-sem_t emptyCount;
+int *gBuffer;//Puntero para acceder al buffer de forma global que apunta a un vector cuya longitud se define en tiempo de ejecución
+int nEle = 0;//Numero de elementos maximos que puede haber en el buffer
+int pointerCostumer = 0;//Posición actual en la que escribir
+int pointerProducer = 0;
+sem_t fillCount;//Semaforo 
+sem_t mutex;//Semaforo
+sem_t emptyCount;//Semaforo
 
 void imprimeVector ()
 {
@@ -25,23 +26,23 @@ void imprimeVector ()
 
 void limpiaVector()
 {
-  for (int i = 0; i < nEle; i++)
+  for (int i = 0; i < nEle; i++)//Pone a 0 todos los elementos del vector
   {
     gBuffer[i]=0;
   } 
 }
 
-void costumer(void* nIt)
+void costumer(void* nIt)//Funcion que ejecutan los hilos clientes
 {
-  int *nIterations = (int*) nIt;
+  int *nIterations = (int*) nIt;//Deshacemos el casting
   while (*nIterations > 0)
-  {
+  {//Este bucle se ejecutará mientras haya iteraciones restantes
     sem_wait(&fillCount);
       sem_wait(&mutex);
-        gBuffer[pointer-1] = 0;
-        printf("El cliente %ld ha comprado el artículo nº %d | Stock actual: ", pthread_self(), pointer);
+        gBuffer[pointerCostumer] = 0;
+        printf("El cliente %ld ha comprado el artículo nº %d | Stock actual: ", pthread_self(), pointerCostumer+1);
         imprimeVector();
-        --pointer;
+        pointerCostumer=((pointerCostumer+1)%nEle);
       sem_post(&mutex);
     sem_post(&emptyCount);
     --*nIterations;
@@ -56,10 +57,10 @@ void producer(void* nIt)
   {
     sem_wait(&emptyCount);
       sem_wait(&mutex);
-        gBuffer[pointer] = 1;
-        ++pointer;
-        printf("El productor %ld ha añadido el artículo nº %d | Stock actual: ", pthread_self(), pointer);
+        gBuffer[pointerProducer] = 1;
+        printf("El productor %ld ha añadido el artículo nº %d | Stock actual: ", pthread_self(), pointerProducer+1);
         imprimeVector();
+        pointerProducer= ((pointerProducer+1)%nEle);
       sem_post(&mutex);
     sem_post(&fillCount);
     --*nIterations;
@@ -69,7 +70,7 @@ void producer(void* nIt)
 
 int main(int argc, char const *argv[])
 {   
-  int select = 1;
+  int select = 1;//Variable para el menú de selección
   while (select !=0 )
   {
     system("clear");
@@ -86,15 +87,15 @@ int main(int argc, char const *argv[])
     scanf("%d", &select);
     getchar();
     printf("\n");
-    if(select==0)
+    if(select==0)//Finaliza la ejecución
     {
       printf("Hasta la próxima.\n");
       exit(EXIT_SUCCESS);
     }
-    else if (select==1)
+    else if (select==1)//Apartado a
     {
-      int buffer[5];
-      gBuffer = buffer;
+      int buffer[5];//Creamos el vector buffer de 5 elementos 
+      gBuffer = buffer;//Hacemos que el vector global buffer apunte a este vector
       nEle = 5;
       limpiaVector();
       int prod_Cons[2];
@@ -135,7 +136,7 @@ int main(int argc, char const *argv[])
       }
       exit(EXIT_SUCCESS);
     }
-    else if (select==2)
+    else if (select==2)//Apartado B
     {
       int buffer[3];
       gBuffer = buffer;
@@ -184,7 +185,7 @@ int main(int argc, char const *argv[])
       system("clear");
       printf("Error seleccione una opción valida.\n");
       printf("Pulse enter para volver al menu principal...\n");
-      getchar();//Recogemos el enter
+      getchar();//Recogemos el enter y volvemos al menú
     }
 
   }
