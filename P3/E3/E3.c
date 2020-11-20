@@ -53,7 +53,7 @@ void costumer(void* nIt)//Funcion que ejecutan los hilos clientes
 void producer(void* nIt)
 {
   int *nIterations = (int*) nIt;
-  while (*nIterations > 0)
+  while (*nIterations > 0)//Deshacemos el casting a void
   {
     sem_wait(&emptyCount);
       sem_wait(&mutex);
