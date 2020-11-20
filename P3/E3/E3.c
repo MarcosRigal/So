@@ -65,7 +65,7 @@ void producer(void* nIt)
     sem_post(&fillCount);
     --*nIterations;
   }
-  pthread_exit(NULL); 
+  pthread_exit(NULL);//Salimos de la hebre
 }
 
 int main(int argc, char const *argv[])
