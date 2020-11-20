@@ -10,7 +10,7 @@ int pointerCostumer = 0;//Posición actual en la que escribir
 int pointerProducer = 0;
 sem_t fillCount;//Semaforo 
 sem_t mutex;//Semaforo
-sem_t emptyCount;//Semaforo
+sem_t emptyCount;//Semafor
 
 void imprimeVector ()
 {
