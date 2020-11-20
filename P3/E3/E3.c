@@ -62,7 +62,7 @@ void producer(void* nIt)
         imprimeVector();
         pointerProducer= ((pointerProducer+1)%nEle);
       sem_post(&mutex);
-    sem_post(&fillCount);
+    sem_post(&fillCount);//a
     --*nIterations;//Le restamos una iteración a esta hebra
   }
   pthread_exit(NULL);//Salimos de la hebre
