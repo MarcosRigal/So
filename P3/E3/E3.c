@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <semaphore.h>
 
 int *gBuffer;//Puntero para acceder al buffer de forma global que apunta a un vector cuya longitud se define en tiempo de ejecución
