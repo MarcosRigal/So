@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 	}
 
 	sem_init(mutex, 1, 1);//Inicializamos el semaforo que controla el acceso a la zona crítica
-  	int status; //Creamos la variable que almacena el número de hijos y la que almacena el estado de salida del hijo
+  	int status; //Creamos que almacena el estado de salida del hijo
   	pid_t pid, childpid; //Estas variables almacenan el id de los procesos hijos. 
   	//Pid almacena el valor devuelto al padre tras el fork y chilpid el valor devuelto al padre por la función wait cuando termina de esperar al hijo 
   	printf("Soy %d el padre de todos\n", getpid()); //El proceso padre imprime su id
