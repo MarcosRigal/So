@@ -76,7 +76,7 @@ int main(int argc, char const *argv[])
    	switch(pid) //En base al valor de pid cada proceso ejecutará una función
    	{
    		case 0: //El fork se ha realizado corractamente
-   	   for (int i = 0; i < 1000000; i++)
+   	   for (int i = 0; i < 100000; i++)
    	   {//No hace falta linkearlo ya que con el fork hereda el puntero contador del padre
          	sem_wait(mutex);
 				printf("Soy %d el hijo nº del proceso: %d\n", getpid(), getppid()); //El hijo se identifica 
