@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/shm.h>
 #include <sys/ipc.h>
-#include <pthread.h>
+#include <semaphore.h>
 #include <signal.h>
 
 //Para testear si un exec funciona ponemos una linea despues del exec si se ejecuta es que el exec ha fallado
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
    int id_Memoria;//Variable para almacenar el identificador de memoria compartida
 	int id_Semaforo;//Variable para almacenar el identificador de memoria compartida del semaforo
    int *contador = NULL;//Puntero a la zona de memoria compartida
-	pthread_mutex_t *lock = NULL;//Semaforo para bloquear el acceso al contador
+	sem_t *mutex = NULL;//Semaforo para bloquear el acceso al contador
    int value;//Almacena el valor devuelto por shmdt al realizar la desconexión
 
    key_t Clave = ftok("Extra2.c",3); //Usamos ftok para generar la clave de acceso a la zona de memoria compartida
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	id_Semaforo = shmget (Clave+1, sizeof(pthread_mutex_t), IPC_CREAT | SHM_R | SHM_W);//Solicitamos un segmento de memoria compartida
+	id_Semaforo = shmget (Clave+1, sizeof(sem_t), IPC_CREAT | SHM_R | SHM_W);//Solicitamos un segmento de memoria compartida
 	if (id_Semaforo == -1)//Comprobamos que se la solicitud se haya completado satisfactoriamente
 	{
 		printf("Main() de E1... No consigo ID para la memoria compartida.\n");
@@ -60,8 +60,8 @@ int main(int argc, char const *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	lock = (pthread_mutex_t *)shmat(id_Semaforo, NULL, 0);//Enganchamos el segmento con el proceso
-	if (lock == NULL)
+	mutex = (sem_t *)shmat(id_Semaforo, NULL, 0);//Enganchamos el segmento con el proceso
+	if (mutex == NULL)
 	{
 		printf("Main() de demo1... No consigo enlace a la memoria compartida.\n");
 		printf("Valor de errno=%d, definido como %s\n", errno, strerror(errno));
@@ -70,11 +70,7 @@ int main(int argc, char const *argv[])
 
   	int status; //Creamos la variable que almacena el estado de salida del hijo
   	pid_t pid, childpid; //Estas variables almacenan el id de los procesos hijos.
-	pthread_mutexattr_t att;
-	pthread_mutexattr_init(&att);
-	pthread_mutexattr_setrobust(&att, PTHREAD_MUTEX_ROBUST);
-	pthread_mutexattr_setpshared(&att, PTHREAD_PROCESS_SHARED);
-	pthread_mutex_init(lock, &att);
+	sem_init(mutex, 1, 1);
   	//Pid almacena el valor devuelto al padre tras el fork y chilpid el valor devuelto al padre por la función wait cuando termina de esperar al hijo 
   	printf("Soy %d el padre de todos\n", getpid());//El proceso padre imprime su id
   	char arg1[256];
@@ -88,7 +84,7 @@ int main(int argc, char const *argv[])
     {
       case 0://El fork se ha realizado corractamente
         printf("Soy %d el hijo nº %d del proceso: %d\n", getpid(), (i+1), getppid()); //El hijo se identifica
-        execlp("./Contador", "./Contador", arg1, arg2,NULL);//La p permite buscar el ejecutable en el path y en el directorio de trabajo
+        execlp("./Contador2", "./Contador2", arg1, arg2,NULL);//La p permite buscar el ejecutable en el path y en el directorio de trabajo
         exit(EXIT_SUCCESS);
 
       case -1:
