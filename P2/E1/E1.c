@@ -54,7 +54,7 @@ int main(int argc, char const *argv[])
   	de ese puntero (a donde apunta) puede ser modificado. Con la dirección de
   	memoria de un flotante que se devuelve en "pthread_exit((void *)z)". Por tanto, "float * ret" ahora
   	apunta a donde apuntaba "float * z", solo que está casteado a void.*/
-    if(pthread_join(thread[i], (void**) &ret)) 
+    if(pthread_join(thread[i], (void*) &ret)) 
 	  {//Entramos si falla el join
 	    fprintf(stderr, "Error joining thread\n");//Informamos al usuario
 	    exit(EXIT_FAILURE);//Salimos

@@ -26,7 +26,7 @@ void * th_file (void * argv)//Esta será la función que ejecuten las hebras.
   se ha reservado en el montículo del proceso o hilo principal, que es accesible a todas los hilos creados.
   ¿Que significa la ultima frase?
   */		 
-	pthread_exit((void**) nlines);//devolvemos el valor del numero de lineas con pthread_exit
+	pthread_exit((void*) nlines);//devolvemos el valor del numero de lineas con pthread_exit
 }
 
 int main(int argc, char const *argv[])
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
   	de ese puntero (a donde apunta) puede ser modificado. Con la dirección de
   	memoria de un entero que se devuelve en "pthread_exit((void *)nlines)". Por tanto, "int * ret" ahora
   	apunta a donde apuntaba "int * nlines", solo que está casteado a void.*/
-    if(pthread_join(thread[i], (void**) &ret)) 
+    if(pthread_join(thread[i], (void*) &ret)) 
 	  {//Entramos si falla el join
 	    fprintf(stderr, "Error joining thread\n");//Informamos al usuario
 	    exit(EXIT_FAILURE);//Salimos
