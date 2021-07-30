@@ -1,7 +1,9 @@
 <div align="center">
     <img width="100%" src="https://www.friday-fun.com/wp-content/uploads/2018/10/os.jpeg" alt="GreenDay">
 </div>
+
 # Instructions:
+
 The practices are organized as follows:
   
 The P# folders represent each of the practices with their corresponding number, also in each practice you will find a PDF document with the statements of the exercises. 
