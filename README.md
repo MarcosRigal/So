@@ -1,4 +1,6 @@
-![SOO.](https://www.friday-fun.com/wp-content/uploads/2018/10/os.jpeg)
+<div align="center">
+    <img width="100%" src="https://www.friday-fun.com/wp-content/uploads/2018/10/os.jpeg" alt="GreenDay">
+</div>
 # Instructions:
 The practices are organized as follows:
   
